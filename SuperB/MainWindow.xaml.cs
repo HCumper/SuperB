@@ -1,20 +1,10 @@
 ﻿using Antlr4.Runtime;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
+[assembly: CLSCompliant(false)]
 namespace SuperB
 {
     /// <summary>
@@ -34,22 +24,28 @@ namespace SuperB
             StreamReader reader = File.OpenText(filename);
 
             ICharStream cs = new AntlrInputStream(reader);
+            SuperBTokenFactory factory = new SuperBTokenFactory();
             SuperBLexer lexer = new SuperBLexer(cs);
+            lexer.TokenFactory = factory;
             CommonTokenStream tokens = new CommonTokenStream(lexer);
 
             SuperBParser parser = new SuperBParser(tokens);
+            //parser.TokenFactory = factory;
             Antlr4.Runtime.Tree.IParseTree tree = parser.program();
 
-            System.Console.WriteLine(tree.ToStringTree(parser));
+            System.Diagnostics.Debug.WriteLine(tree.ToStringTree(parser));
 
             SymbolTable symbolTable = new SymbolTable();
-            SuperBVisitor<int> visitor = new SuperBVisitor<int>(symbolTable);
-            visitor.FirstPass = true;   // Array functions and procedures
-            visitor.Visit(tree);
-            visitor.FirstPass = false; // Everything else
-            visitor.Visit(tree);
-            System.Console.ReadKey();
+            BuildSymbolTableVisitor<int> symbolTableVisitor = new BuildSymbolTableVisitor<int>(symbolTable);
+            symbolTableVisitor.FirstPass = true;   // Array functions and procedures
+            symbolTableVisitor.Visit(tree);
+            symbolTableVisitor.FirstPass = false; // Everything else
+            symbolTableVisitor.Visit(tree);
 
+            FindTypesVisitor<int> findTypesVisitor = new FindTypesVisitor<int>(symbolTable);
+            findTypesVisitor.Visit(tree);
+
+            
 
                // | Select On expr Equal(ID | literal | toexpr) : stmtlist
                //| select On ID Newline On

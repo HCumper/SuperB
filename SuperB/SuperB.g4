@@ -159,6 +159,7 @@ Real
 Unknowntype:;
 Void:;
 Scalar:;
+LineNumber:;
 
 fragment LETTER : [a-zA-Z];
 fragment DIGIT : [0-9];

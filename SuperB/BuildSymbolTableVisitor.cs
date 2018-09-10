@@ -7,7 +7,7 @@ using static SuperB.SuperBParser;
 
 namespace SuperB
 {
-    public class SuperBVisitor<Result> : SuperBBaseVisitor<Result>, ISuperBVisitor<Result>
+    public class BuildSymbolTableVisitor<Result> : SuperBBaseVisitor<Result>, ISuperBVisitor<Result>
     {
         SymbolTable SymbolTable { get; set; }
         string FunctionScopeName { get; set; }
@@ -17,7 +17,7 @@ namespace SuperB
         ISet<string> References;
         public bool FirstPass { get; set; }
 
-        public SuperBVisitor(SymbolTable symbolTable)
+        public BuildSymbolTableVisitor(SymbolTable symbolTable)
         {
             SymbolTable = symbolTable;
             ImplicitInts = new HashSet<string>();
@@ -30,9 +30,7 @@ namespace SuperB
             bool funcProc = false;
             string localScope = "";
             var payload = (CommonToken)node.Payload;
-            if (payload.Text == "astring")
-            {
-            }
+
             if (FuncScopeActive && FirstPass || !FuncScopeActive && !FirstPass)
             {
                 if (FuncScopeActive && payload.Text != FunctionScopeName)

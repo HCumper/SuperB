@@ -61,8 +61,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FindTypesVisitor.cs" />
     <Compile Include="ParseError.cs" />
-    <Compile Include="SuperBVisitor.cs" />
+    <Compile Include="BuildSymbolTableVisitor.cs" />
+    <Compile Include="SuperBTokenFactory.cs" />
     <Compile Include="SymbolTable\FunctionLibrary.cs" />
     <Compile Include="SymbolTable\ISymbolTable.cs" />
     <Compile Include="SymbolTable\MemorySpace.cs" />
@@ -83,7 +85,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
