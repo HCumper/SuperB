@@ -1,6 +1,4 @@
-90 IMPLICIT% lo, zog
-93 IMPLICIT$ astring
-97 astring = "hhh"
+97 astring$ = "hhh"
 100 CLS
 110 TURBO_repfil
 120 sorts=0:partitions=0

@@ -15,11 +15,12 @@ namespace SuperB
         public MainWindow()
         {
             InitializeComponent();
-
-
+            
             var t = new SymbolTable();
 
-            string filename = @"C:\Users\Hugh Cumper\Source\Repos\SuperB\SuperB\q3.sb";
+            //    string filename = @"C:\Users\hcump\Source\Repos\SuperB\SuperB\q3.sb";
+            string filename = @"z:\SuperB\SuperB\q3.sb";
+
             StringBuilder builder = new StringBuilder();
             StreamReader reader = File.OpenText(filename);
 
@@ -36,8 +37,10 @@ namespace SuperB
             System.Diagnostics.Debug.WriteLine(tree.ToStringTree(parser));
 
             SymbolTable symbolTable = new SymbolTable();
-            BuildSymbolTableVisitor<int> symbolTableVisitor = new BuildSymbolTableVisitor<int>(symbolTable);
-            symbolTableVisitor.FirstPass = true;   // Array functions and procedures
+            BuildSymbolTableVisitor<int> symbolTableVisitor = new BuildSymbolTableVisitor<int>(symbolTable)
+            {
+                FirstPass = true   // Array functions and procedures
+            };
             symbolTableVisitor.Visit(tree);
             symbolTableVisitor.FirstPass = false; // Everything else
             symbolTableVisitor.Visit(tree);

@@ -186,5 +186,20 @@ namespace SuperB
 
             return type;
         }
+
+        public override Result VisitAdditive([NotNull] AdditiveContext context)
+        {
+            return base.VisitAdditive(context);
+        }
+
+        public override Result VisitExpr([NotNull] ExprContext context)
+        {
+            return base.VisitExpr(context);
+        }
+
+        public override Result VisitLiteral([NotNull] LiteralContext context)
+        {
+            return base.VisitLiteral(context);
+        }
     }
 }

@@ -19,7 +19,7 @@ namespace SuperB
 
     public class SuperBToken : CommonToken
     {
-        int EvaluatedType { get; set; } // SuperBLexer type
+        public int EvaluatedType { get; set; } // SuperBLexer type
 
         public SuperBToken(int type) : base(type)
         {
