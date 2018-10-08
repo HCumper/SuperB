@@ -29,6 +29,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>7.3</LangVersion>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -45,6 +46,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -66,10 +68,14 @@
     <Compile Include="FindTypesVisitor.cs" />
     <Compile Include="ParseError.cs" />
     <Compile Include="BuildSymbolTableVisitor.cs" />
+    <Compile Include="SuperBToken.cs" />
     <Compile Include="SuperBTokenFactory.cs" />
+    <Compile Include="SymbolTable\ArraySymbol.cs" />
+    <Compile Include="SymbolTable\FuncSymbol.cs" />
     <Compile Include="SymbolTable\FunctionLibrary.cs" />
     <Compile Include="SymbolTable\ISymbolTable.cs" />
     <Compile Include="SymbolTable\MemorySpace.cs" />
+    <Compile Include="SymbolTable\ParamSymbol.cs" />
     <Compile Include="SymbolTable\Scope.cs" />
     <Compile Include="SymbolTable\Symbol.cs" />
     <Compile Include="SymbolTable\SymbolTable.cs" />

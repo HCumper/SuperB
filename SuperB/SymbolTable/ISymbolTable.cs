@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SuperB
+﻿namespace SuperB.SymbolTable
 {
     public interface ISymbolTable
     {
-        void AddSymbol(Symbol symbol);
-        Symbol ReadSymbol(string name, string scope);
+       // void AddSymbol(Symbol symbol);
+       // Symbol ReadSymbol(string name, string scope);
     }
 }

@@ -1,10 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SuperB
 {
-    public enum Severities { Error, Warning, Info }
+    public enum Severities
+    {
+        Error,
+        // ReSharper disable once UnusedMember.Global
+        Warning,
+        // ReSharper disable once UnusedMember.Global
+        Info
+    }
 
     public class ParseError : Exception
     {

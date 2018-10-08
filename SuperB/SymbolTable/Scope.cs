@@ -1,81 +1,69 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
+﻿//using System.Collections.Generic;
 
-namespace SuperB
-{
-    public class Scope
-    {
-        public string Name { get; set; }
-        Dictionary<string, Symbol> Entries = new Dictionary<string, Symbol>();
+//namespace SuperB.SymbolTable
+//{
+//    public class Scope
+//    {
+//        private readonly Dictionary<string, Symbol> _entries = new Dictionary<string, Symbol>();
 
-        public Scope(string name) => Name = name;
-        // INCOMPLETE
-        public Symbol GetElement(Symbol symbol)
-        {
-            //Symbol foundSymbol = new Symbol();
+//        public Scope(string name)
+//        {
+//            Name = name;
+//        }
 
-            //bool found = Entries.TryGetValue(symbol.Name, out foundSymbol);
-            //if (!found) return null;
+//        public string Name { get; set; }
 
-            //if (symbol.Type != foundSymbol.Type)
-            //{
-            //    throw new ParseError("Name " + symbol.Name + " wrong type");
-            //}
+//        // INCOMPLETE
+//        public Symbol GetElement(Symbol symbol)
+//        {
+//            //Symbol foundSymbol = new Symbol();
 
-            //if (symbol.ArrayParameters == null) return foundSymbol;
+//            //bool found = Entries.TryGetValue(symbol.Name, out foundSymbol);
+//            //if (!found) return null;
 
-            //// string slicing unsupported
-            //if (symbol.ArrayParameters.Count != foundSymbol.ArrayParameters.Count)
-            //{
-            //    throw new ParseError("Name " + symbol.Name + " wrong number of parameters specified");
-            //}
+//            //if (symbol.Type != foundSymbol.Type)
+//            //{
+//            //    throw new ParseError("Name " + symbol.Name + " wrong type");
+//            //}
 
-            //for (int i = 0; i < symbol.ArrayParameters.Count; i++)
-            //{
-            //    if (symbol.ArrayParameters[i] > foundSymbol.ArrayParameters[i])
-            //    {
-            //        throw new ExecutionError("Name " + symbol.Name + " index " + i + " out of bounds");
-            //    }
-            //}
+//            //if (symbol.ArrayParameters == null) return foundSymbol;
 
-            int subscript = 0;
-            // create collection of multipliers for each dimension
-            //arrayParameters.Aggregate((total, next) => total *= next); 
-            return null;
-        }
+//            //// string slicing unsupported
+//            //if (symbol.ArrayParameters.Count != foundSymbol.ArrayParameters.Count)
+//            //{
+//            //    throw new ParseError("Name " + symbol.Name + " wrong number of parameters specified");
+//            //}
 
-        public Symbol AddElement(Symbol symbol)
-        {
-            bool found = Entries.ContainsKey(symbol.Name);
-            if (found)
-            {
-                return null;
-            }
-            else
-            {
-                Entries.Add(symbol.Name, symbol);
-            }
-            return symbol;
-        }
+//            //for (int i = 0; i < symbol.ArrayParameters.Count; i++)
+//            //{
+//            //    if (symbol.ArrayParameters[i] > foundSymbol.ArrayParameters[i])
+//            //    {
+//            //        throw new ExecutionError("Name " + symbol.Name + " index " + i + " out of bounds");
+//            //    }
+//            //}
 
-        // symbol must be fully populated
-        public Symbol UpdateElement(Symbol symbol)
-        {
-            bool found = Entries.ContainsKey(symbol.Name);
-            if (!found)
-            {
-                return null;
-            }
-            else
-            {
-                Entries[symbol.Name] = symbol;
-            }
-            return symbol;
-        }
-    }
-}
+//            // create collection of multipliers for each dimension
+//            //arrayParameters.Aggregate((total, next) => total *= next); 
+//            return null;
+//        }
 
+//        public Symbol AddElement(Symbol symbol)
+//        {
+//            var found = _entries.ContainsKey(symbol.Name);
+//            if (found)
+//                return null;
+//            _entries.Add(symbol.Name, symbol);
+//            return symbol;
+//        }
 
+//        // symbol must be fully populated
+//        public Symbol UpdateElement(Symbol symbol)
+//        {
+//            var found = _entries.ContainsKey(symbol.Name);
+//            if (!found)
+//                return null;
+//            _entries[symbol.Name] = symbol;
+//            return symbol;
+//        }
+//    }
+//}
