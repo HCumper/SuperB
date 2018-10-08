@@ -3,11 +3,10 @@ using Antlr4.Runtime.Misc;
 using Antlr4.Runtime.Tree;
 using System;
 using System.Collections.Generic;
-using SuperB.SymbolTable;
 
 namespace SuperB
 {
-    public class FindTypesVisitor<TResult> : SuperBBaseVisitor<TResult>
+    public class FindTypesVisitor<Result> : SuperBBaseVisitor<Result>
     {
         // ReSharper disable once CollectionNeverQueried.Local
         private readonly IList<int> _lineNumbers = new List<int>();
@@ -15,14 +14,19 @@ namespace SuperB
         private readonly SymbolTable.SymbolTable _symbols;
         private string _scope = "~GLOBAL";
 
-        public FindTypesVisitor(SymbolTable.SymbolTable symbolTable)
+        public FindTypesVisitor(SymbolTable.SymbolTable symbolTable) => _symbols = symbolTable;
+
+        public override Result VisitBinary(SuperBParser.BinaryContext context)
         {
-            _symbols = symbolTable;
+            dynamic firstOperandType = Visit(context.children[0]);
+            dynamic secondOperandTypeOpType = Visit(context.children[2]);
+            if (firstOperandType != secondOperandTypeOpType) throw new ParseError("Incompatible types");
+            ((SuperBToken) context.start).EvaluatedType = (int) firstOperandType;
+            return firstOperandType;
+
         }
 
-        public override TResult VisitExpr([NotNull] SuperBParser.ExprContext context) => base.VisitExpr(context);
-
-        public override TResult VisitAssignment([NotNull] SuperBParser.AssignmentContext context)
+        public override Result VisitAssignment([NotNull] SuperBParser.AssignmentContext context)
         {
             dynamic firstOperandType = Visit(context.children[0]);
             dynamic secondOperandTypeOpType = Visit(context.children[2]);
@@ -34,9 +38,9 @@ namespace SuperB
                 return firstOperandType;
         }
 
-        public override TResult VisitStmtlist([NotNull] SuperBParser.StmtlistContext context)
+        public override Result VisitStmtlist([NotNull] SuperBParser.StmtlistContext context)
         {
-            TResult res = default;
+            Result res = default;
             try
             {
                 res = base.VisitStmtlist(context);
@@ -47,7 +51,7 @@ namespace SuperB
             return res;
         }
 
-        public override TResult VisitTerminal([NotNull] ITerminalNode node)
+        public override Result VisitTerminal([NotNull] ITerminalNode node)
         {
             CommonToken token = (CommonToken)node.Payload;
             if (token.Type == SuperBLexer.Integer && _startOfLine)
@@ -60,12 +64,12 @@ namespace SuperB
             if (token.Type == SuperBLexer.ID)
             {
                 var sym = _symbols.ReadAnySymbol(token.Text, token.Text != _scope ? _scope : "~GLOBAL");
-                return (TResult)Convert.ChangeType(sym.Type, typeof(int));
+                return (Result)Convert.ChangeType(sym.Type, typeof(int));
             }
-            return (TResult)Convert.ChangeType(token.Type, typeof(int));
+            return (Result)Convert.ChangeType(token.Type, typeof(int));
         }
 
-        public override TResult VisitProc(SuperBParser.ProcContext context)
+        public override Result VisitProc(SuperBParser.ProcContext context)
         {
             var tok = (SuperBToken)context.children[0].GetChild(1).GetChild(0).Payload;
             _scope = tok.Text;
@@ -74,7 +78,7 @@ namespace SuperB
             return result;
         }
 
-        public override TResult VisitFunc(SuperBParser.FuncContext context)
+        public override Result VisitFunc(SuperBParser.FuncContext context)
         {
             var tok = (SuperBToken)context.children[0].GetChild(1).GetChild(0).Payload;
             _scope = tok.Text;

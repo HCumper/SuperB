@@ -1,4 +1,5 @@
-97 astring$ = "hhh"
+90 x=3+4
+100 IF x > 7 THEN PRINT "yes"
 100 CLS
 110 TURBO_repfil
 120 sorts=0:partitions=0

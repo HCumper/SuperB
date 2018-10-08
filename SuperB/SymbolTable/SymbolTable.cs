@@ -12,27 +12,18 @@ namespace SuperB.SymbolTable
         public void AddSymbol(Symbol symbol)
         {
             if (!_table.ContainsKey(Tuple.Create(symbol.Name, symbol.Scope)))
+            {
                 _table.Add(new KeyValuePair<Tuple<string, string>, Symbol>(Tuple.Create(symbol.Name, symbol.Scope),
                     symbol));
-        }
-
-        public Symbol ReadSymbol(string name, string scope)
-        {
-            if (!_table.ContainsKey(Tuple.Create(name, scope))) return null;
-            return _table[Tuple.Create(name, scope)];
-        }
-
-        public Symbol ReadAnySymbol(string name, string scope)
-        {
-            if (_table.ContainsKey(Tuple.Create(name, scope))) 
-            return _table[Tuple.Create(name, scope)];
-            else
-            {
-                if (_table.ContainsKey(Tuple.Create(name, "~GLOBAL")))
-                    return _table[Tuple.Create(name, "~GLOBAL")];
-                else return null;
             }
         }
 
+        public Symbol ReadSymbol(string name, string scope) => _table.ContainsKey(Tuple.Create(name, scope)) ? _table[Tuple.Create(name, scope)] : null;
+
+        public Symbol ReadAnySymbol(string name, string scope)
+        {
+            return _table.ContainsKey(Tuple.Create(name, scope)) ? _table[Tuple.Create(name, scope)]
+                : _table.ContainsKey(Tuple.Create(name, "~GLOBAL")) ? _table[Tuple.Create(name, "~GLOBAL")] : null;
+        }
     }
 }

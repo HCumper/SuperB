@@ -7,7 +7,7 @@ using static SuperB.SuperBParser;
 
 namespace SuperB
 {
-    public class BuildSymbolTableVisitor<TResult> : SuperBBaseVisitor<TResult>
+    public class BuildSymbolTableVisitor<Result> : SuperBBaseVisitor<Result>
     {
         private readonly ISet<string> _implicitInts;
         private readonly ISet<string> _implicitStrings;
@@ -26,7 +26,7 @@ namespace SuperB
         private bool FuncScopeActive { get; set; }
         public bool FirstPass { get; set; }
 
-        public override TResult VisitTerminal(ITerminalNode node)
+        public override Result VisitTerminal(ITerminalNode node)
         {
             var funcProc = false;
             var payload = (CommonToken) node.Payload;
@@ -66,7 +66,7 @@ namespace SuperB
             return default;
         }
 
-        public override TResult VisitDim([NotNull] DimContext context)
+        public override Result VisitDim([NotNull] DimContext context)
         {
             var name = (CommonToken) context.children[1].Payload;
             var paramList = (ParenthesizedlistContext) context.children[2].Payload;
@@ -83,7 +83,7 @@ namespace SuperB
             return base.VisitDim(context);
         }
 
-        public override TResult VisitFuncheader([NotNull] FuncheaderContext context)
+        public override Result VisitFuncheader([NotNull] FuncheaderContext context)
         {
             var node = (CommonToken) context.children[1].GetChild(0).Payload;
             FunctionScopeName = node.Text;
@@ -93,7 +93,7 @@ namespace SuperB
             return default;
         }
 
-        public override TResult VisitProcheader([NotNull] ProcheaderContext context)
+        public override Result VisitProcheader([NotNull] ProcheaderContext context)
         {
             var node = (CommonToken) context.children[1].GetChild(0).Payload;
             FunctionScopeName = node.Text;
@@ -104,7 +104,7 @@ namespace SuperB
             return default;
         }
 
-        public override TResult VisitLoc([NotNull] LocContext context)
+        public override Result VisitLoc([NotNull] LocContext context)
         {
             FuncScopeActive = true;
             base.VisitLoc(context);
@@ -113,32 +113,30 @@ namespace SuperB
             return default;
         }
 
-        public override TResult VisitImplicit([NotNull] ImplicitContext context)
+        public override Result VisitImplicit([NotNull] ImplicitContext context)
         {
-            if (FirstPass)
-            {
-                var implicitDecl = ((CommonToken) context.children[0].Payload).Text;
-                var implicitType = ExtractType(implicitDecl);
-                var subContext = (UnparenthesizedContext) context.children[1];
-                foreach (var child in subContext.children)
-                    if (child is IdentContext identContext)
-                    {
-                        var identCtx = identContext.children[0].Payload;
-                        var terminalNode = ((IdentifierContext) identCtx).Payload.GetChild(0);
-                        var name = ((TerminalNodeImpl) terminalNode).Payload.Text;
-                        if (implicitType == SuperBLexer.Integer)
-                            _implicitInts.Add(name);
-                        else
-                            _implicitStrings.Add(name);
-                    }
+            if (!FirstPass) return base.VisitImplicit(context);
+            var implicitDecl = ((CommonToken) context.children[0].Payload).Text;
+            var implicitType = ExtractType(implicitDecl);
+            var subContext = (UnparenthesizedContext) context.children[1];
+            foreach (var child in subContext.children)
+                if (child is IdentContext identContext)
+                {
+                    var identCtx = identContext.children[0].Payload;
+                    var terminalNode = ((IdentifierContext) identCtx).Payload.GetChild(0);
+                    var name = ((TerminalNodeImpl) terminalNode).Payload.Text;
+                    if (implicitType == SuperBLexer.Integer)
+                        _implicitInts.Add(name);
+                    else
+                        _implicitStrings.Add(name);
+                }
 
-                ((StmtlistContext) context.Parent).children = null;
-            }
+            ((StmtlistContext) context.Parent).children = null;
 
             return base.VisitImplicit(context);
         }
 
-        public override TResult VisitReference([NotNull] ReferenceContext context)
+        public override Result VisitReference([NotNull] ReferenceContext context)
         {
             if (FirstPass)
             {
@@ -158,21 +156,6 @@ namespace SuperB
             }
 
             return base.VisitReference(context);
-        }
-
-        public override TResult VisitAdditive([NotNull] AdditiveContext context)
-        {
-            return base.VisitAdditive(context);
-        }
-
-        public override TResult VisitExpr([NotNull] ExprContext context)
-        {
-            return base.VisitExpr(context);
-        }
-
-        public override TResult VisitLiteral([NotNull] LiteralContext context)
-        {
-            return base.VisitLiteral(context);
         }
 
         private int ExtractType(string name)
