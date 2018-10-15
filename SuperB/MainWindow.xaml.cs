@@ -39,7 +39,13 @@ namespace SuperB
 
             Debug.WriteLine(tree.ToStringTree(parser));
 
+            var table = new SuperBLib.SymbolTable(tree);
+//            table.get_Build();
+
+
             var symbolTable = new SymbolTable.SymbolTable();
+
+
             var symbolTableVisitor = new BuildSymbolTableVisitor<int>(symbolTable)
             {
                 FirstPass = true // Array functions and procedures
