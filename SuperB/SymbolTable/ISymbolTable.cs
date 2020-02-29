@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace SuperB
+﻿namespace SuperB
 {
     public interface ISymbolTable
     {

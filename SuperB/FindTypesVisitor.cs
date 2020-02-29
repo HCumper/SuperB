@@ -6,73 +6,95 @@ using System.Collections.Generic;
 
 namespace SuperB
 {
-    public class FindTypesVisitor<Result> : SuperBBaseVisitor<Result>, ISuperBVisitor<Result>
+    public class FindTypesVisitor<TResult> : SuperBBaseVisitor<TResult>, ISuperBVisitor<TResult>
     {
-        IList<int> LineNumbers = new List<int>();
-        bool StartOfLine = true;
-        SymbolTable symbols = null;
-
-        public FindTypesVisitor(SymbolTable symbolTable) => symbols = symbolTable;
-
-        public override Result VisitIdent([NotNull] SuperBParser.IdentContext context)
+        private IList<int> LineNumbers = new List<int>();
+        private bool StartOfLine = true;
+        private SymbolTable symbols = null;
+        string LocalScope = "~GLOBAL";
+        public FindTypesVisitor(SymbolTable symbolTable)
         {
-            return base.VisitIdent(context);
+            symbols = symbolTable;
         }
 
-        public override Result VisitIdentifier([NotNull] SuperBParser.IdentifierContext context)
-        {
-            return base.VisitIdentifier(context);
-        }
-
-        public override Result VisitExpr([NotNull] SuperBParser.ExprContext context)
+        public override TResult VisitExpr(SuperBParser.ExprContext context)
         {
             return base.VisitExpr(context);
         }
 
-        public override Result VisitAssignment([NotNull] SuperBParser.AssignmentContext context)
+        public override TResult VisitAssignment(SuperBParser.AssignmentContext context)
         {
+            if (context == null) throw new ArgumentNullException(nameof(context));
             dynamic firstOperandType = Visit(context.children[0]);
-            dynamic secondOperandTypeOpType = Visit(context.children[0]);
-            if (firstOperandType != secondOperandTypeOpType) throw new ParseError("Incompatible types");
-            else return firstOperandType;
+            dynamic secondOperandTypeOpType = Visit(context.children[2]);
+            if (firstOperandType != secondOperandTypeOpType)
+            {
+                throw new ParseErrorException("Incompatible types");
+            }
+            ((SuperBToken)context.start).EvaluatedType = (int)firstOperandType;
+            return firstOperandType;
         }
 
-        public override Result VisitTerminal([NotNull] ITerminalNode node)
+        public override TResult VisitStmtlist([NotNull] SuperBParser.StmtlistContext context)
+        {
+            TResult res = default;
+            try
+            {
+                res = base.VisitStmtlist(context);
+            }
+            catch (ParseErrorException pe)
+            { }
+
+            return res;
+        }
+
+        public override TResult VisitTerminal([NotNull] ITerminalNode node)
         {
             CommonToken token = (CommonToken)node.Payload;
             if (token.Type == SuperBLexer.Integer && StartOfLine)
             {
-                LineNumbers.Add(Int32.Parse(token.Text));
+                LineNumbers.Add(int.Parse(token.Text));
                 token.Type = SuperBLexer.LineNumber;
             }
-            StartOfLine = (token.Text == "\n") ? true : false;
+            StartOfLine = (token.Text == "\n" || token.Text == "\r\n") ? true : false;
 
             if (token.Type == SuperBLexer.ID)
             {
-               Symbol sym = symbols.ReadSymbol(token.Text, "~GLOBAL");
-                return (Result)Convert.ChangeType(token.Type, typeof(int));
+                Symbol sym = symbols.ReadSymbol(token.Text, LocalScope);
+                if (sym == null) sym = symbols.ReadSymbol(token.Text, "~GLOBAL");
+
+                return (TResult)Convert.ChangeType(sym.Type, typeof(int));
             }
-            return base.VisitTerminal(node);
+            return (TResult)Convert.ChangeType(token.Type, typeof(int));
         }
 
-        public override Result VisitLine([NotNull] SuperBParser.LineContext context)
+        public override TResult VisitProcheader([NotNull] SuperBParser.ProcheaderContext context)
         {
-            return base.VisitLine(context);
+            var node = (CommonToken)context.children[1].GetChild(0).Payload;
+            LocalScope = node.Text;
+            return default(TResult);
         }
 
-        public override Result VisitStmtlist([NotNull] SuperBParser.StmtlistContext context)
+        public override TResult VisitFuncheader([NotNull] SuperBParser.FuncheaderContext context)
         {
-            return base.VisitStmtlist(context);
+            var node = (CommonToken)context.children[1].GetChild(0).Payload;
+            LocalScope = node.Text;
+            return default(TResult);
         }
 
-        public override Result VisitStmt([NotNull] SuperBParser.StmtContext context)
+        public override TResult VisitProc([NotNull] SuperBParser.ProcContext context)
         {
-            return base.VisitStmt(context);
+            var baseResult = base.VisitProc(context);
+            LocalScope = "~GLOBAL";
+            return baseResult;
         }
 
-        public override Result VisitSeparator([NotNull] SuperBParser.SeparatorContext context)
+        public override TResult VisitFunc([NotNull] SuperBParser.FuncContext context)
         {
-            return base.VisitSeparator(context);
+            var baseResult = base.VisitFunc(context);
+            LocalScope = "~GLOBAL";
+            return baseResult;
         }
+
     }
 }

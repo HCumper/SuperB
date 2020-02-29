@@ -1,7 +1,4 @@
-﻿using Antlr4.Runtime.Tree;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace SuperB
 {
@@ -33,7 +30,7 @@ namespace SuperB
     }
 
     public class FuncSymbol : Symbol
-        {
+    {
         int ReturnType { get; set; }
         public FuncSymbol(string name, int type, string scope, int returnType)
             : base(name, type, scope)
@@ -45,7 +42,7 @@ namespace SuperB
     public class ArraySymbol : Symbol
     {
         List<int> Dimensions { get; set; }
-        public ArraySymbol (string name, int type, string scope, List<int> dimensions)
+        public ArraySymbol(string name, int type, string scope, List<int> dimensions)
             : base(name, type, scope)
         {
             this.Dimensions = dimensions;

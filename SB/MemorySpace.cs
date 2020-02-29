@@ -1,5 +1,4 @@
-﻿using SuperB;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -43,7 +42,7 @@ namespace SuperB
             Symbol foundSymbol = null;
             if (LocalScopes.Count != 0)
             {
-                Scope current = LocalScopes.Where(w => w.Name.Equals("scope")).FirstOrDefault();
+                Scope current = LocalScopes.Where(w => w.Name.Equals("scope", StringComparison.CurrentCulture)).FirstOrDefault();
                 foundSymbol = current.GetElement(symbol);
             }
             if (foundSymbol == null)
@@ -53,20 +52,20 @@ namespace SuperB
             return foundSymbol;
         }
 
-        private int FindSubscript(IList<int> subscripts, IList<int>dimensions)
+        private int FindSubscript(IList<int> subscripts, IList<int> dimensions)
         {
-            if (subscripts.Count() != dimensions.Count) throw new ParseError("Wrong number of subscripts");
-            for (int i = 0; i < subscripts.Count(); i++)
+            if (subscripts.Count != dimensions.Count) throw new ParseErrorException("Wrong number of subscripts");
+            for (int i = 0; i < subscripts.Count; i++)
             {
-                if (subscripts[i] > dimensions[i]) throw new ParseError($"Subscript {i + 1} is {subscripts[i]} which too large for dimension {dimensions[i]}");
+                if (subscripts[i] > dimensions[i]) throw new ParseErrorException($"Subscript {i + 1} is {subscripts[i]} which too large for dimension {dimensions[i]}");
             }
-            for (int i = 0; i < subscripts.Count(); i++) subscripts[i]--;
+            for (int i = 0; i < subscripts.Count; i++) subscripts[i]--;
             int oneDSubscript = 0, dimensionSize = 1;
             while (subscripts.Count > 0)
             {
                 oneDSubscript += subscripts[subscripts.Count - 1] * dimensionSize;
-                subscripts.RemoveAt(subscripts.Count() - 1);
-                dimensionSize *= dimensions[subscripts.Count()];
+                subscripts.RemoveAt(subscripts.Count - 1);
+                dimensionSize *= dimensions[subscripts.Count];
             }
 
             return oneDSubscript;

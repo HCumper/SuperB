@@ -7,7 +7,7 @@ using static SuperB.SuperBParser;
 
 namespace SuperB
 {
-    public class BuildSymbolTableVisitor<Result> : SuperBBaseVisitor<Result>, ISuperBVisitor<Result>
+    public class BuildSymbolTableVisitor<TResult> : SuperBBaseVisitor<TResult>, ISuperBVisitor<TResult>
     {
         SymbolTable SymbolTable { get; set; }
         string FunctionScopeName { get; set; }
@@ -25,7 +25,7 @@ namespace SuperB
             References = new HashSet<string>();
         }
 
-        public override Result VisitTerminal(ITerminalNode node)
+        public override TResult VisitTerminal([NotNull] ITerminalNode node)
         {
             bool funcProc = false;
             string localScope = "";
@@ -66,10 +66,10 @@ namespace SuperB
                     SymbolTable.AddSymbol(symbol);
                 }
             }
-            return default(Result);
+            return default(TResult);
         }
 
-        public override Result VisitDim([NotNull] SuperBParser.DimContext context)
+        public override TResult VisitDim([NotNull] SuperBParser.DimContext context)
         {
             var name = (CommonToken)context.children[1].Payload;
             var paramList = (ParenthesizedlistContext)context.children[2].Payload;
@@ -87,17 +87,17 @@ namespace SuperB
             return base.VisitDim(context);
         }
 
-        public override Result VisitFuncheader([NotNull] FuncheaderContext context)
+        public override TResult VisitFuncheader([NotNull] FuncheaderContext context)
         {
             var node = (CommonToken)context.children[1].GetChild(0).Payload;
             FunctionScopeName = node.Text;
             FuncScopeActive = true;
             base.VisitFuncheader(context);
             FuncScopeActive = false;
-            return default(Result);
+            return default(TResult);
         }
 
-        public override Result VisitProcheader([NotNull] ProcheaderContext context)
+        public override TResult VisitProcheader([NotNull] ProcheaderContext context)
         {
             var node = (CommonToken)context.children[1].GetChild(0).Payload;
             FunctionScopeName = node.Text;
@@ -105,19 +105,19 @@ namespace SuperB
             base.VisitProcheader(context);
             FuncScopeActive = false;
             References = new HashSet<string>();
-            return default(Result);
+            return default(TResult);
         }
 
-        public override Result VisitLoc([NotNull] LocContext context)
+        public override TResult VisitLoc([NotNull] LocContext context)
         {
             FuncScopeActive = true;
             base.VisitLoc(context);
             FuncScopeActive = false;
             References = new HashSet<string>();
-            return default(Result);
+            return default(TResult);
         }
 
-        public override Result VisitImplicit([NotNull] ImplicitContext context)
+        public override TResult VisitImplicit([NotNull] ImplicitContext context)
         {
             if (FirstPass)
             {
@@ -136,7 +136,7 @@ namespace SuperB
                             ImplicitInts.Add(name);
                         }
                         else
-                        { 
+                        {
                             ImplicitStrings.Add(name);
                         }
 
@@ -147,7 +147,7 @@ namespace SuperB
             return base.VisitImplicit(context);
         }
 
-        public override Result VisitReference([NotNull] ReferenceContext context)
+        public override TResult VisitReference([NotNull] ReferenceContext context)
         {
             if (FirstPass)
             {
@@ -185,6 +185,21 @@ namespace SuperB
             }
 
             return type;
+        }
+
+        public override TResult VisitAdditive([NotNull] AdditiveContext context)
+        {
+            return base.VisitAdditive(context);
+        }
+
+        public override TResult VisitExpr([NotNull] ExprContext context)
+        {
+            return base.VisitExpr(context);
+        }
+
+        public override TResult VisitLiteral([NotNull] LiteralContext context)
+        {
+            return base.VisitLiteral(context);
         }
     }
 }

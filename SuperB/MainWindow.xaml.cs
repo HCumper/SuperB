@@ -16,10 +16,11 @@ namespace SuperB
         {
             InitializeComponent();
 
-
             var t = new SymbolTable();
 
-            string filename = @"C:\Users\Hugh Cumper\Source\Repos\SuperB\SuperB\q3.sb";
+            //    string filename = @"C:\Users\hcump\Source\Repos\SuperB\SuperB\q3.sb";
+            string filename = @"d:\temp\SuperB\SuperB\q3.sb";
+
             StringBuilder builder = new StringBuilder();
             StreamReader reader = File.OpenText(filename);
 
@@ -36,8 +37,10 @@ namespace SuperB
             System.Diagnostics.Debug.WriteLine(tree.ToStringTree(parser));
 
             SymbolTable symbolTable = new SymbolTable();
-            BuildSymbolTableVisitor<int> symbolTableVisitor = new BuildSymbolTableVisitor<int>(symbolTable);
-            symbolTableVisitor.FirstPass = true;   // Array functions and procedures
+            BuildSymbolTableVisitor<int> symbolTableVisitor = new BuildSymbolTableVisitor<int>(symbolTable)
+            {
+                FirstPass = true   // Array functions and procedures
+            };
             symbolTableVisitor.Visit(tree);
             symbolTableVisitor.FirstPass = false; // Everything else
             symbolTableVisitor.Visit(tree);
@@ -45,15 +48,15 @@ namespace SuperB
             FindTypesVisitor<int> findTypesVisitor = new FindTypesVisitor<int>(symbolTable);
             findTypesVisitor.Visit(tree);
 
-            
 
-               // | Select On expr Equal(ID | literal | toexpr) : stmtlist
-               //| select On ID Newline On
+
+            // | Select On expr Equal(ID | literal | toexpr) : stmtlist
+            //| select On ID Newline On
 
             /*(EndRepeat ID? | { _input.Lt(1).Type == EndDef }?)*/
-             //var name scope type
-             //array adds parameterlist
-             //function extends array adds astnode or delegate
+            //var name scope type
+            //array adds parameterlist
+            //function extends array adds astnode or delegate
 
         }
     }
