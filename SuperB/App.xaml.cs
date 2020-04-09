@@ -3,8 +3,9 @@
 namespace SuperB
 {
     /// <summary>
-    /// Interaction logic for App.xaml
+    ///     Interaction logic for App.xaml
     /// </summary>
+    // ReSharper disable once RedundantExtendsListEntry
     public partial class App : Application
     {
     }

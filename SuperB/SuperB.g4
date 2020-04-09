@@ -50,16 +50,16 @@ separator : Comma | Bang | Semi | To;
 
 expr :
 	  LeftParen expr RightParen														#Parenthesized
-	| expr (Plus | Minus) expr														#UnaryAdditive
-	| expr Amp expr																	#Ampersand
+	| (Plus | Minus) expr															#UnaryAdditive
+	| expr Amp expr																	#Binary
 	| <assoc=right> (String | ID) Instr expr										#Instr
-	| <assoc=right> expr Caret expr													#Caret
-	| expr (Multiply | Divide | Mod | Div) expr										#Multiplicative
-	| expr (Plus | Minus) expr														#Additive
-	| expr (Equal | NotEqual | Less | LessEqual | Greater | GreaterEqual) expr		#Relational
+	| <assoc=right> expr Caret expr													#Binary
+	| expr (Multiply | Divide | Mod | Div) expr										#Binary
+	| expr (Plus | Minus) expr														#Binary
+	| expr (Equal | NotEqual | Less | LessEqual | Greater | GreaterEqual) expr		#Binary
 	| Not expr																		#Not
-	| expr And expr																	#And
-	| expr (Or | Xor) expr															#Or
+	| expr And expr																	#Binary
+	| expr (Or | Xor) expr															#Binary
 	| identifier																	#Ident
 	| (Integer | String | Real)														#Literal
 	;
