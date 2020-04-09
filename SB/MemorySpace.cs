@@ -7,9 +7,10 @@ namespace SuperB
     // run time structure for storing current values. 1 global space and a stack of local ones
     public class MemorySpace
     {
-        private Scope GlobalScope = new Scope("GLOBAL");
-        private ISet<Scope> LocalScopes = new HashSet<Scope>();
-        MemorySpace()
+        private readonly Scope GlobalScope = new Scope("GLOBAL");
+        private readonly ISet<Scope> LocalScopes = new HashSet<Scope>();
+
+        private MemorySpace()
         {
             // Prime the global table with function style keywords
         }
@@ -24,22 +25,26 @@ namespace SuperB
             throw new NotImplementedException();
         }
 
-        Symbol AddOrUpdateSymbol(Symbol symbol)
+        private Symbol AddOrUpdateSymbol(Symbol symbol)
         {
             Symbol tableSymbol = UpdateSymbol(symbol);
-            if (tableSymbol == null) tableSymbol = AddSymbol(symbol);
+            if (tableSymbol == null)
+            {
+                tableSymbol = AddSymbol(symbol);
+            }
+
             return tableSymbol;
         }
 
-        void CreateLocalScope(string name)
+        private void CreateLocalScope(string name)
         {
             Scope newScope = new Scope(name);
             LocalScopes.Add(newScope);
         }
 
-        Symbol ReadSymbol(Symbol symbol, Scope scope)
+        private Symbol ReadSymbol(Symbol symbol)
         {
-            Symbol foundSymbol = null;
+            Symbol? foundSymbol = null;
             if (LocalScopes.Count != 0)
             {
                 Scope current = LocalScopes.Where(w => w.Name.Equals("scope", StringComparison.CurrentCulture)).FirstOrDefault();
@@ -54,12 +59,23 @@ namespace SuperB
 
         private int FindSubscript(IList<int> subscripts, IList<int> dimensions)
         {
-            if (subscripts.Count != dimensions.Count) throw new ParseErrorException("Wrong number of subscripts");
+            if (subscripts.Count != dimensions.Count)
+            {
+                throw new ParseErrorException("Wrong number of subscripts");
+            }
+
             for (int i = 0; i < subscripts.Count; i++)
             {
-                if (subscripts[i] > dimensions[i]) throw new ParseErrorException($"Subscript {i + 1} is {subscripts[i]} which too large for dimension {dimensions[i]}");
+                if (subscripts[i] > dimensions[i])
+                {
+                    throw new ParseErrorException($"Subscript {i + 1} is {subscripts[i]} which too large for dimension {dimensions[i]}");
+                }
             }
-            for (int i = 0; i < subscripts.Count; i++) subscripts[i]--;
+            for (int i = 0; i < subscripts.Count; i++)
+            {
+                subscripts[i]--;
+            }
+
             int oneDSubscript = 0, dimensionSize = 1;
             while (subscripts.Count > 0)
             {

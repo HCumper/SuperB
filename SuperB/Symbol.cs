@@ -21,7 +21,7 @@ namespace SuperB
 
     public class ParamSymbol : Symbol
     {
-        bool Reference { get; set; }
+        private bool Reference { get; set; }
         public ParamSymbol(string name, int type, string scope, bool reference)
             : base(name, type, scope)
         {
@@ -31,7 +31,7 @@ namespace SuperB
 
     public class FuncSymbol : Symbol
     {
-        int ReturnType { get; set; }
+        private int ReturnType { get; set; }
         public FuncSymbol(string name, int type, string scope, int returnType)
             : base(name, type, scope)
         {
@@ -41,7 +41,7 @@ namespace SuperB
 
     public class ArraySymbol : Symbol
     {
-        List<int> Dimensions { get; set; }
+        private List<int> Dimensions { get; set; }
         public ArraySymbol(string name, int type, string scope, List<int> dimensions)
             : base(name, type, scope)
         {

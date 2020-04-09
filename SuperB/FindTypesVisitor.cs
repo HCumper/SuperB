@@ -8,10 +8,10 @@ namespace SuperB
 {
     public class FindTypesVisitor<TResult> : SuperBBaseVisitor<TResult>, ISuperBVisitor<TResult>
     {
-        private IList<int> LineNumbers = new List<int>();
+        private readonly IList<int> LineNumbers = new List<int>();
         private bool StartOfLine = true;
-        private SymbolTable symbols = null;
-        string LocalScope = "~GLOBAL";
+        private readonly SymbolTable symbols = null;
+        private string LocalScope = "~GLOBAL";
         public FindTypesVisitor(SymbolTable symbolTable)
         {
             symbols = symbolTable;
@@ -24,7 +24,11 @@ namespace SuperB
 
         public override TResult VisitAssignment(SuperBParser.AssignmentContext context)
         {
-            if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             dynamic firstOperandType = Visit(context.children[0]);
             dynamic secondOperandTypeOpType = Visit(context.children[2]);
             if (firstOperandType != secondOperandTypeOpType)
@@ -61,7 +65,10 @@ namespace SuperB
             if (token.Type == SuperBLexer.ID)
             {
                 Symbol sym = symbols.ReadSymbol(token.Text, LocalScope);
-                if (sym == null) sym = symbols.ReadSymbol(token.Text, "~GLOBAL");
+                if (sym == null)
+                {
+                    sym = symbols.ReadSymbol(token.Text, "~GLOBAL");
+                }
 
                 return (TResult)Convert.ChangeType(sym.Type, typeof(int));
             }
@@ -72,14 +79,14 @@ namespace SuperB
         {
             var node = (CommonToken)context.children[1].GetChild(0).Payload;
             LocalScope = node.Text;
-            return default(TResult);
+            return default;
         }
 
         public override TResult VisitFuncheader([NotNull] SuperBParser.FuncheaderContext context)
         {
             var node = (CommonToken)context.children[1].GetChild(0).Payload;
             LocalScope = node.Text;
-            return default(TResult);
+            return default;
         }
 
         public override TResult VisitProc([NotNull] SuperBParser.ProcContext context)

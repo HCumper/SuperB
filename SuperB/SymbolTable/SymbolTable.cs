@@ -6,7 +6,7 @@ namespace SuperB
     // Compile time structure for storing information about symbols. Single monolithic store keyed by name and scope
     public class SymbolTable : ISymbolTable
     {
-        private IDictionary<Tuple<string, string>, Symbol> Table = new Dictionary<Tuple<string, string>, Symbol>();
+        private readonly IDictionary<Tuple<string, string>, Symbol> Table = new Dictionary<Tuple<string, string>, Symbol>();
 
         public SymbolTable()
         {
@@ -29,14 +29,22 @@ namespace SuperB
 
         public void AddSymbol(Symbol symbol)
         {
-            if (!Table.ContainsKey(Tuple.Create(symbol.Name, symbol.Scope))) Table.Add(new KeyValuePair<Tuple<string, string>, Symbol>(Tuple.Create(symbol.Name, symbol.Scope), symbol));
+            if (!Table.ContainsKey(Tuple.Create(symbol.Name, symbol.Scope)))
+            {
+                Table.Add(new KeyValuePair<Tuple<string, string>, Symbol>(Tuple.Create(symbol.Name, symbol.Scope), symbol));
+            }
         }
 
         public Symbol ReadSymbol(string name, string scope)
         {
-            if (!Table.ContainsKey(Tuple.Create(name, scope))) return null;
+            if (!Table.ContainsKey(Tuple.Create(name, scope)))
+            {
+                return null;
+            }
             else
+            {
                 return Table[Tuple.Create(name, scope)];
+            }
         }
     }
 }

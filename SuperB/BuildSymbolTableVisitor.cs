@@ -9,12 +9,13 @@ namespace SuperB
 {
     public class BuildSymbolTableVisitor<TResult> : SuperBBaseVisitor<TResult>, ISuperBVisitor<TResult>
     {
-        SymbolTable SymbolTable { get; set; }
-        string FunctionScopeName { get; set; }
-        bool FuncScopeActive { get; set; }
-        ISet<string> ImplicitInts;
-        ISet<string> ImplicitStrings;
-        ISet<string> References;
+        private SymbolTable SymbolTable { get; set; }
+        private string FunctionScopeName { get; set; }
+        private bool FuncScopeActive { get; set; }
+
+        private readonly ISet<string> ImplicitInts;
+        private readonly ISet<string> ImplicitStrings;
+        private ISet<string> References;
         public bool FirstPass { get; set; }
 
         public BuildSymbolTableVisitor(SymbolTable symbolTable)
@@ -27,6 +28,7 @@ namespace SuperB
 
         public override TResult VisitTerminal([NotNull] ITerminalNode node)
         {
+            if (node == null) throw new ArgumentNullException(nameof(node));
             bool funcProc = false;
             string localScope = "";
             var payload = (CommonToken)node.Payload;
@@ -40,7 +42,10 @@ namespace SuperB
                 else
                 {
                     localScope = "~GLOBAL";
-                    if (FirstPass) funcProc = true;
+                    if (FirstPass)
+                    {
+                        funcProc = true;
+                    }
                 }
                 if (payload.Type == SuperBLexer.ID && SymbolTable.ReadSymbol(payload.Text, FunctionScopeName) == null)
                 {
@@ -71,7 +76,11 @@ namespace SuperB
 
         public override TResult VisitDim([NotNull] SuperBParser.DimContext context)
         {
-            var name = (CommonToken)context.children[1].Payload;
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var paramList = (ParenthesizedlistContext)context.children[2].Payload;
             List<int> dimensions = new List<int>();
             foreach (var node in paramList.children)
@@ -82,6 +91,7 @@ namespace SuperB
                     dimensions.Add(Int32.Parse(payload.Text));
                 }
             }
+            var name = (CommonToken)context.children[1].Payload;
             Symbol symbol = new ArraySymbol(name.Text, ExtractType(name.Text), "~GLOBAL", dimensions);
             SymbolTable.AddSymbol(symbol);
             return base.VisitDim(context);
@@ -89,6 +99,11 @@ namespace SuperB
 
         public override TResult VisitFuncheader([NotNull] FuncheaderContext context)
         {
+            if (context == null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             var node = (CommonToken)context.children[1].GetChild(0).Payload;
             FunctionScopeName = node.Text;
             FuncScopeActive = true;
@@ -171,8 +186,16 @@ namespace SuperB
 
         private int ExtractType(string name)
         {
-            if (ImplicitInts.Contains(name)) return SuperBLexer.Integer;
-            if (ImplicitStrings.Contains(name)) return SuperBLexer.String;
+            if (ImplicitInts.Contains(name))
+            {
+                return SuperBLexer.Integer;
+            }
+
+            if (ImplicitStrings.Contains(name))
+            {
+                return SuperBLexer.String;
+            }
+
             var type = SuperBLexer.Real;
             switch (name.Substring(name.Length - 1))
             {

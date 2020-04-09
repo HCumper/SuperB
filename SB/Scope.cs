@@ -5,9 +5,14 @@ namespace SuperB
     public class Scope
     {
         public string Name { get; set; }
-        Dictionary<string, Symbol> Entries = new Dictionary<string, Symbol>();
 
-        public Scope(string name) => Name = name;
+        private readonly Dictionary<string, Symbol> Entries = new Dictionary<string, Symbol>();
+
+        public Scope(string name)
+        {
+            Name = name;
+        }
+
         // INCOMPLETE
         public Symbol GetElement(Symbol symbol)
         {

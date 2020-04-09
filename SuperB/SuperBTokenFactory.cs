@@ -3,7 +3,7 @@ using System;
 
 namespace SuperB
 {
-    class SuperBTokenFactory : ITokenFactory
+    internal class SuperBTokenFactory : ITokenFactory
     {
         public IToken Create(Tuple<ITokenSource, ICharStream> source, int type, string text, int channel, int start, int stop, int line, int charPositionInLine)
         {

@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Runtime.Serialization;
 
 namespace SB
 {
@@ -9,10 +8,22 @@ namespace SB
     [Serializable]
     public class ParseErrorException : Exception
     {
+        public ParseErrorException()
+        {
+        }
+
         public ParseErrorException(string message)
             : base(message)
         {
             Severity = Severity.Error;
+        }
+
+        public ParseErrorException(string? message, Exception? innerException) : base(message, innerException)
+        {
+        }
+
+        protected ParseErrorException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
         }
 
         public Severity Severity { get; set; }

@@ -16,8 +16,6 @@ namespace SuperB
         {
             InitializeComponent();
 
-            var t = new SymbolTable();
-
             //    string filename = @"C:\Users\hcump\Source\Repos\SuperB\SuperB\q3.sb";
             string filename = @"d:\temp\SuperB\SuperB\q3.sb";
 
